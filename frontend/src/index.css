@@ -107,9 +107,9 @@ body {
   flex-direction: column;
   min-height: 100vh;
   min-width: 0;
+  max-width: 100%;
   position: relative;
   overflow-x: clip;
-  padding-left: 18rem;
 }
 
 /* Typography styles */
@@ -158,61 +158,8 @@ body {
   text-align: center;
 }
 
-/* Sidebar Custom Layout (Left-aligned menu) */
-.nav-sidebar {
-  width: 18rem;
-  height: calc(100vh - 3.75rem);
-  border-right: 3px solid var(--color-dark);
-  background-color: var(--bg-cream);
-  padding: 1rem 0.75rem;
-  position: fixed;
-  top: 3.75rem;
-  left: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 0.75rem;
-  overflow-y: auto;
-  z-index: 100;
-}
-
-.sidebar-top {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.sidebar-logo {
-  display: flex;
-  flex-direction: column;
-  cursor: pointer;
-  text-decoration: none;
-}
-
-.sidebar-logo-text {
-  font-family: var(--font-display);
-  font-size: 1.85rem;
-  font-weight: 900;
-  line-height: 1;
-  color: var(--color-dark);
-}
-
-.sidebar-logo-sub {
-  font-family: var(--font-tech);
-  font-size: 0.6rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--kraft-brown);
-  margin-top: 0.15rem;
-}
-
-.sidebar-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-
+/* Shared neobrutalist nav atoms — reused by the fullscreen Nav overlay
+   (components/layout/Nav.jsx) and by a few admin/portal panels below. */
 .sidebar-item-btn {
   display: flex;
   align-items: center;
@@ -308,53 +255,317 @@ body {
   color: var(--kraft-brown);
 }
 
-/* Mobile Sidebar / Header elements */
-.nav-mobile-header {
-  display: none;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem 1.5rem;
+/* ============================================
+   NAV — slim fixed top bar + fullscreen dropdown
+   overlay menu (components/layout/Nav.jsx).
+   Replaces the old always-expanded sidebar, which
+   silently overflowed and cut off its last items on
+   any screen shorter than ~840px. The overlay never
+   has that problem: it fills the viewport itself, so
+   the whole link grid is sized to fit inside it.
+   ============================================ */
+.nav-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3.75rem;
   background-color: var(--bg-cream);
   border-bottom: 3px solid var(--color-dark);
-  position: sticky;
-  top: 0;
-  z-index: 200;
-  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  z-index: 9990;
+  box-shadow: 0px 2px 0px rgba(17, 17, 17, 0.08);
 }
 
-.mobile-logo-text {
-  font-family: var(--font-display);
-  font-size: 1.5rem;
+.nav-topbar-logo {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  text-align: left;
+  min-width: 0;
+}
+
+.nav-topbar-title {
+  font-size: 1.3rem;
   font-weight: 900;
-  letter-spacing: -0.02em;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav-topbar-sub {
+  font-size: 0.55rem;
+  font-weight: 700;
+  color: var(--kraft-brown);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 0.2rem;
+  white-space: nowrap;
+}
+
+.nav-topbar-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+  padding: 0.5rem 0.9rem;
+  border: 3px solid var(--color-dark);
+  border-radius: 0.65rem;
+  background-color: var(--color-dark);
+  color: var(--bg-cream);
+  cursor: pointer;
+  box-shadow: 3px 3px 0px rgba(17, 17, 17, 0.25);
+  transition: var(--transition-smooth);
+}
+
+.nav-topbar-toggle:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px rgba(17, 17, 17, 0.25);
+}
+
+.nav-topbar-toggle-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.nav-overlay {
+  position: fixed;
+  inset: 0;
+  height: 100dvh;
+  background-color: var(--bg-cream);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s;
+}
+
+.nav-overlay-header {
+  flex-shrink: 0;
+  height: 3.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  border-bottom: 3px solid var(--color-dark);
+}
+
+.nav-overlay-logo {
+  font-size: 1.4rem;
+  font-weight: 900;
   cursor: pointer;
 }
 
-.mobile-menu-btn {
+.nav-overlay-close {
   padding: 0.5rem;
   border: 3px solid var(--color-dark);
+  border-radius: 0.6rem;
   background-color: #ffffff;
-  border-radius: 0.5rem;
   cursor: pointer;
   box-shadow: 3px 3px 0px var(--color-dark);
   display: flex;
   align-items: center;
+  transition: var(--transition-smooth);
 }
 
-.mobile-menu-overlay {
-  display: none;
-  position: fixed;
-  top: 73px;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: var(--bg-cream);
-  z-index: 190;
-  padding: 1.5rem;
-  flex-direction: column;
-  gap: 1rem;
+.nav-overlay-close:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px var(--color-dark);
+}
+
+.nav-overlay-body {
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
-  border-bottom: 3px solid var(--color-dark);
+  display: flex;
+  gap: 2.5rem;
+  padding: 2rem;
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.nav-overlay-hero {
+  flex: 0 0 19rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.65rem;
+  text-align: left;
+}
+
+.nav-overlay-hero-photo {
+  width: 6.5rem;
+  height: 6.5rem;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 3px solid var(--color-dark);
+  overflow: hidden;
+  box-shadow: 4px 4px 0px var(--color-dark);
+  background-color: #ffffff;
+}
+
+.nav-overlay-hero-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.nav-overlay-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background-color: var(--pastel-yellow);
+  font-size: 0.6rem;
+  padding: 0.3rem 0.6rem;
+}
+
+.nav-overlay-hero-name {
+  font-size: 1.5rem;
+  font-weight: 900;
+  line-height: 1.1;
+  margin-top: 0.25rem;
+}
+
+.nav-overlay-hero-tagline {
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--color-muted);
+}
+
+.nav-overlay-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.nav-overlay-hero-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  width: 100%;
+}
+
+.nav-overlay-hero-stat {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  border: 2px solid var(--color-dark);
+  border-radius: 0.6rem;
+  background-color: #ffffff;
+}
+
+.nav-overlay-hero-stat-value {
+  font-size: 0.75rem;
+  font-weight: 900;
+}
+
+.nav-overlay-hero-stat-label {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--kraft-brown);
+}
+
+.nav-overlay-links-wrap {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.nav-overlay-links {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.nav-overlay-link {
+  --link-color: var(--pastel-blue);
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.85rem 1rem;
+  border: 3px solid var(--color-dark);
+  border-radius: 0.85rem;
+  background-color: #ffffff;
+  cursor: pointer;
+  box-shadow: 3px 3px 0px var(--color-dark);
+  opacity: 0;
+  transform: translateY(0.5rem);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, opacity 0.35s ease;
+}
+
+.nav-overlay.is-open .nav-overlay-link {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.nav-overlay-link:hover,
+.nav-overlay-link.is-active {
+  background-color: var(--link-color);
+  transform: translate(-3px, -3px);
+  box-shadow: 6px 6px 0px var(--color-dark);
+}
+
+.nav-overlay-link-index {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--kraft-brown);
+  flex-shrink: 0;
+}
+
+.nav-overlay-link-label {
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.nav-overlay-routes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  border-top: 2px dashed var(--color-dark);
+  opacity: 0.9;
+}
+
+.nav-overlay-route-btn {
+  --link-color: var(--pastel-pink);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.9rem;
+  border: 3px solid var(--color-dark);
+  border-radius: 0.7rem;
+  background-color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 2px 2px 0px var(--color-dark);
+  transition: var(--transition-smooth);
+}
+
+.nav-overlay-route-btn:hover,
+.nav-overlay-route-btn.is-active {
+  background-color: var(--link-color);
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0px var(--color-dark);
+}
+
+.nav-overlay-route-badge {
+  background-color: #111111;
+  color: #f6f4ee;
+  border: none;
+  font-size: 0.55rem;
 }
 
 /* Marquee scrolling ticker */
@@ -1626,18 +1837,36 @@ body {
 }
 
 @media (max-width: 768px) {
-  .app-wrapper {
+  .nav-overlay-body {
     flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.5rem 1.25rem 2rem;
   }
-  
-  .nav-sidebar {
+
+  .nav-overlay-hero {
+    flex: none;
+    align-items: center;
+    text-align: center;
+  }
+
+  .nav-overlay-hero-stats {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .nav-overlay-hero-stat {
+    flex: 1 1 auto;
+  }
+
+  .nav-topbar-sub {
     display: none;
   }
-  
-  .content-wrapper {
-    padding-left: 0;
+
+  .nav-topbar-title {
+    font-size: 1.1rem;
   }
-  
+
   .input-row-double {
     grid-template-columns: 1fr;
   }
@@ -1654,14 +1883,6 @@ body {
   .responsive-grid-half {
     grid-template-columns: 1fr;
     gap: 1rem;
-  }
-  
-  .nav-mobile-header {
-    display: flex;
-  }
-  
-  .mobile-menu-overlay {
-    display: flex;
   }
   
   .hero-grid {
@@ -2679,11 +2900,4 @@ body {
     font-size: 1.35rem;
   }
 
-  /* Keep the fixed top bar a single line on phones — Sidebar's own
-     hamburger drawer already covers every one of these links on the
-     public route, so hiding them here avoids a second, overlapping
-     header underneath the fixed bar. */
-  .global-nav-actions {
-    display: none !important;
-  }
 }

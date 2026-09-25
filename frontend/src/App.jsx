@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Sidebar from './components/layout/Sidebar';
+import Nav from './components/layout/Nav';
 import Ticker from './components/layout/Ticker';
 import SectionNav from './components/layout/SectionNav';
 import Hero from './components/sections/Hero';
@@ -15,7 +15,6 @@ import Contact from './components/sections/Contact';
 import AdminPanel from './components/sections/AdminPanel';
 import AthletePortal from './components/sections/AthletePortal';
 import { ShieldCheck, Mail, Heart, Camera, MessageCircle } from 'lucide-react';
-import useScrollToSection from './hooks/useScrollToSection';
 import { api } from './services/api';
 
 const SEED_RECIPES = [
@@ -224,110 +223,6 @@ const SEED_BOOKINGS = [
   { id: 105, clientName: 'Federico Álvarez', sport: 'Running', day: 'Viernes', time: '09:00', date: '31 de mayo' }
 ];
 
-// Global Fixed Neobrutalist Navigation Bar (shown on every route)
-function GlobalNavBar({ currentRoute, scrollToSection }) {
-  const goHome = () => {
-    if (currentRoute !== '#/') {
-      window.location.hash = '#/';
-      setTimeout(() => scrollToSection('hero', { offset: 0 }), 150);
-    } else {
-      scrollToSection('hero', { offset: 0 });
-    }
-  };
-
-  const goToSection = (id) => {
-    if (currentRoute !== '#/') {
-      window.location.hash = '#/';
-      setTimeout(() => scrollToSection(id), 150);
-    } else {
-      scrollToSection(id);
-    }
-  };
-
-  return (
-    <div
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        height: '3.75rem',
-        backgroundColor: 'var(--bg-cream)',
-        borderBottom: '3px solid var(--color-dark)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0 2rem',
-        zIndex: 9999,
-        boxShadow: '0px 2px 0px rgba(17,17,17,0.08)'
-      }}
-      className="select-none"
-    >
-      <div
-        onClick={goHome}
-        style={{ display: 'flex', flexDirection: 'column', cursor: 'pointer', textAlign: 'left' }}
-      >
-        <span className="font-display" style={{ fontSize: '1.4rem', fontWeight: '900', lineHeight: 1 }}>Guadalupe Martínez</span>
-        <span className="font-tech" style={{ fontSize: '0.55rem', fontWeight: 'bold', color: 'var(--kraft-brown)', textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: '0.2rem' }}>
-          Nutrición Deportiva & Salud
-        </span>
-      </div>
-
-      <div className="global-nav-actions" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-        <button
-          onClick={goHome}
-          className="btn-neo"
-          style={{
-            padding: '0.35rem 0.75rem',
-            fontSize: '0.75rem',
-            backgroundColor: currentRoute === '#/' ? 'var(--pastel-yellow)' : '#ffffff',
-            transform: currentRoute === '#/' ? 'translate(-1px, -1px)' : 'none',
-            boxShadow: currentRoute === '#/' ? '2px 2px 0px var(--color-dark)' : '1px 1px 0px var(--color-dark)'
-          }}
-        >
-          🏠 Inicio
-        </button>
-
-        <button
-          onClick={() => goToSection('workflow')}
-          className="btn-neo"
-          style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', backgroundColor: '#ffffff' }}
-        >
-          📋 Método
-        </button>
-
-        <button
-          onClick={() => { window.location.hash = '#/plan-elite'; }}
-          className="btn-neo"
-          style={{
-            padding: '0.35rem 0.75rem',
-            fontSize: '0.75rem',
-            backgroundColor: currentRoute === '#/plan-elite' ? 'var(--pastel-pink)' : '#ffffff',
-            transform: currentRoute === '#/plan-elite' ? 'translate(-1px, -1px)' : 'none',
-            boxShadow: currentRoute === '#/plan-elite' ? '2px 2px 0px var(--color-dark)' : '1px 1px 0px var(--color-dark)'
-          }}
-        >
-          ⚡ Mi Plan Élite
-        </button>
-
-        <button
-          onClick={() => { window.location.hash = '#/admin'; }}
-          className="btn-neo"
-          style={{
-            padding: '0.35rem 0.75rem',
-            fontSize: '0.75rem',
-            backgroundColor: currentRoute === '#/admin' ? 'var(--pastel-peach)' : '#ffffff',
-            transform: currentRoute === '#/admin' ? 'translate(-1px, -1px)' : 'none',
-            boxShadow: currentRoute === '#/admin' ? '2px 2px 0px var(--color-dark)' : '1px 1px 0px var(--color-dark)'
-          }}
-        >
-          🛡️ Consola Nutri (Admin)
-        </button>
-      </div>
-    </div>
-  );
-}
-
 function Footer() {
   return (
     <footer className="footer-neo select-none">
@@ -385,8 +280,6 @@ function App() {
   const [patients, setPatients] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [activeRecipeFilter, setActiveRecipeFilter] = useState('all');
-
-  const scrollToSection = useScrollToSection();
 
   // Simple state routing system using location hash
   const [currentRoute, setCurrentRoute] = useState(window.location.hash || '#/');
@@ -487,7 +380,7 @@ function App() {
   if (currentRoute === '#/admin') {
     return (
       <div style={{ paddingTop: '3.75rem', minHeight: '100vh', backgroundColor: 'var(--bg-cream)' }}>
-        <GlobalNavBar currentRoute={currentRoute} scrollToSection={scrollToSection} />
+        <Nav currentRoute={currentRoute} />
 
         <div style={{ padding: '2rem 1.5rem', maxWidth: '1200px', margin: '0 auto' }}>
           <AdminPanel
@@ -511,7 +404,7 @@ function App() {
   if (currentRoute === '#/plan-elite') {
     return (
       <div style={{ paddingTop: '3.75rem', minHeight: '100vh', backgroundColor: 'var(--bg-cream)' }}>
-        <GlobalNavBar currentRoute={currentRoute} scrollToSection={scrollToSection} />
+        <Nav currentRoute={currentRoute} />
         <AthletePortal recipes={recipes} />
       </div>
     );
@@ -521,10 +414,9 @@ function App() {
   // scroll through every section (Route: #/ or default)
   return (
     <div style={{ paddingTop: '3.75rem' }}>
-      <GlobalNavBar currentRoute={currentRoute} scrollToSection={scrollToSection} />
+      <Nav currentRoute={currentRoute} />
 
       <div className="app-wrapper">
-        <Sidebar />
         <SectionNav />
 
         <div className="content-wrapper">
