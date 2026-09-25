@@ -58,7 +58,7 @@ export default function Calculator() {
       <div className="section-container" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
         
         {/* Title */}
-        <div className="flex flex-col text-left select-none">
+        <div className="flex flex-col text-left select-none" data-reveal>
           <span className="section-label">Combustible y Macros</span>
           <h2 className="section-title">
             calculadora deportista

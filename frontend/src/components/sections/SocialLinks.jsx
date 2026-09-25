@@ -52,7 +52,7 @@ export default function SocialLinks() {
   return (
     <section id="social" className="social-section">
       <div className="section-container" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', textAlign: 'center', alignItems: 'center' }}>
-        <span className="section-label">Sigamos en Contacto</span>
+        <span className="section-label" data-reveal>Sigamos en Contacto</span>
         <h2 className="section-title" style={{ marginBottom: 0 }}>redes sociales</h2>
         <p style={{ fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: '0.9rem', color: 'var(--color-muted)', maxWidth: '32rem' }}>
           Elegí tu plataforma favorita y sumate a la comunidad. Respondo dudas de nutrición

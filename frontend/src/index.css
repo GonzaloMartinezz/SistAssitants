@@ -2901,3 +2901,519 @@ body {
   }
 
 }
+
+/* ============================================
+   HERO — two-column layout wrapper (photo + story)
+   Split into real classes (not inline styles) so the
+   columns can be collapsed to a single column on mobile.
+   ============================================ */
+.hero-cols-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 2rem;
+  align-items: start;
+}
+
+.hero-col-photo {
+  grid-column: span 5;
+}
+
+.hero-col-story {
+  grid-column: span 7;
+}
+
+/* Visually hidden but accessible — pairs with aria-hidden text like the
+   giant clipped "GUADA" headline in ImpactStatement. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ============================================
+   SCROLL REVEAL — fade + slide entrance system
+   Driven by hooks/useScrollReveal.js, which adds `.is-revealed`
+   to any [data-reveal] element once it crosses into view.
+   data-reveal="left" / "right" / "scale" pick the entrance style;
+   a bare data-reveal is a fade + slide-up.
+   ============================================ */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+[data-reveal="left"] {
+  transform: translate3d(-36px, 0, 0);
+}
+
+[data-reveal="right"] {
+  transform: translate3d(36px, 0, 0);
+}
+
+[data-reveal="scale"] {
+  transform: scale(0.92);
+}
+
+[data-reveal].is-revealed,
+[data-reveal="left"].is-revealed,
+[data-reveal="right"].is-revealed,
+[data-reveal="scale"].is-revealed {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+
+/* ============================================
+   STICKY SHOWCASE — pinned-text scrollytelling
+   (components/common/StickyShowcase.jsx)
+   A text panel stays pinned while a tall column of visual
+   blocks scrolls past; whichever block crosses the viewport's
+   vertical center drives which text card is shown.
+   ============================================ */
+.sticky-showcase {
+  margin-top: 4.5rem;
+}
+
+.sticky-showcase-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
+  gap: 3.5rem;
+  /* Deliberately NOT align-items:start — the sticky column's grid item must
+     stretch to match the tall track column's height, or it has no scroll
+     room to stick within (see .sticky-showcase-sticky-col). */
+}
+
+.sticky-showcase-sticky-col {
+  position: relative;
+}
+
+.sticky-showcase-sticky-inner {
+  position: sticky;
+  top: calc(3.75rem + 3rem);
+  display: grid;
+  grid-template-areas: "stack" "dots";
+  grid-template-rows: auto auto;
+  row-gap: 1.75rem;
+}
+
+.sticky-showcase-textblock {
+  grid-area: stack;
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 2rem;
+  border: 3px solid var(--color-dark);
+  border-radius: 1.5rem;
+  background-color: var(--block-color, var(--pastel-blue));
+  box-shadow: 7px 7px 0px var(--color-dark);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(16px);
+  transition: opacity 0.45s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.45s;
+  pointer-events: none;
+}
+
+.sticky-showcase-textblock.is-active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+  position: relative;
+  z-index: 2;
+}
+
+.sticky-showcase-icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 3px solid var(--color-dark);
+  border-radius: 0.9rem;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sticky-showcase-tag {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-dark);
+  opacity: 0.65;
+}
+
+.sticky-showcase-title {
+  font-size: 1.5rem;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.sticky-showcase-desc {
+  font-family: var(--font-sans);
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.6;
+  color: var(--color-dark);
+  opacity: 0.85;
+  margin: 0;
+}
+
+.sticky-showcase-progress {
+  grid-area: dots;
+  display: flex;
+  gap: 0.6rem;
+}
+
+.sticky-showcase-dot {
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  border: 2px solid var(--color-dark);
+  background-color: transparent;
+  transition: var(--transition-smooth);
+}
+
+.sticky-showcase-dot.is-active {
+  background-color: var(--block-color, var(--kraft-brown));
+  transform: scale(1.3);
+}
+
+.sticky-showcase-track-col {
+  display: flex;
+  flex-direction: column;
+  gap: 3.5rem;
+}
+
+.sticky-showcase-visual {
+  min-height: 58vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  border: 3px dashed var(--color-dark);
+  border-radius: 2rem;
+  opacity: 0.35;
+  color: var(--color-dark);
+  background-color: transparent;
+  transition: opacity 0.4s ease, border-style 0.4s ease, background-color 0.4s ease, transform 0.4s ease;
+}
+
+.sticky-showcase-visual.is-active {
+  opacity: 1;
+  border-style: solid;
+  background-color: color-mix(in srgb, var(--block-color, var(--pastel-blue)) 22%, transparent);
+  transform: scale(1.02);
+}
+
+.sticky-showcase-visual-num {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  opacity: 0.55;
+}
+
+/* ============================================
+   METHOD SHOWCASE — intro + circular "orbit" diagram
+   (components/sections/MethodShowcase.jsx)
+   ============================================ */
+.method-showcase-section {
+  margin: 0 auto;
+}
+
+.method-diagram-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3rem;
+  margin-bottom: 2rem;
+}
+
+.method-diagram-intro {
+  flex: 1 1 20rem;
+}
+
+.method-orbit {
+  position: relative;
+  flex-shrink: 0;
+  width: 20rem;
+  height: 20rem;
+  max-width: 100%;
+}
+
+.method-orbit-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 3px solid var(--color-dark);
+}
+
+.method-orbit-ring-outer {
+  opacity: 0.9;
+}
+
+.method-orbit-ring-inner {
+  inset: 18%;
+  border-style: dashed;
+  opacity: 0.4;
+  animation: orbit-spin 40s linear infinite;
+}
+
+@keyframes orbit-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.method-orbit-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 50%;
+  border: 3px solid var(--color-dark);
+  background-color: var(--color-dark);
+  color: var(--bg-cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  font-weight: 900;
+  box-shadow: 5px 5px 0px var(--kraft-brown);
+  z-index: 3;
+}
+
+.method-orbit-node {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(var(--orbit-angle)) translate(0, -8.6rem) rotate(calc(-1 * var(--orbit-angle)));
+  padding: 0.55rem 1rem;
+  border: 3px solid var(--color-dark);
+  border-radius: 999px;
+  background-color: var(--pastel-blue);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  box-shadow: 3px 3px 0px var(--color-dark);
+  z-index: 2;
+}
+
+.method-orbit-node:nth-of-type(2) { background-color: var(--pastel-pink); }
+.method-orbit-node:nth-of-type(3) { background-color: var(--pastel-green); }
+.method-orbit-node:nth-of-type(4) { background-color: var(--pastel-yellow); }
+
+/* ============================================
+   IMPACT STATEMENT — giant clipped-text hero moment
+   (components/sections/ImpactStatement.jsx)
+   ============================================ */
+.impact-statement {
+  position: relative;
+  width: 100%;
+  background-color: var(--color-dark);
+  color: var(--bg-cream);
+  padding: 6.5rem 1.5rem 7.5rem;
+  margin: 2rem 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  clip-path: polygon(0 2.5rem, 100% 0, 100% calc(100% - 2.5rem), 0 100%);
+}
+
+.impact-diagonal-edge {
+  position: absolute;
+  left: -2%;
+  width: 104%;
+  height: 6px;
+  background-color: var(--kraft-brown);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.impact-diagonal-edge-top {
+  top: 0;
+  transform-origin: left top;
+  transform: rotate(-1deg) translateY(1.6rem);
+}
+
+.impact-diagonal-edge-bottom {
+  bottom: 0;
+  transform-origin: left bottom;
+  transform: rotate(-1deg) translateY(-1.8rem);
+}
+
+.impact-statement-inner {
+  position: relative;
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.25rem;
+  z-index: 1;
+}
+
+.impact-text-mask {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  padding: 1rem 0;
+}
+
+.impact-text-mask-photo {
+  position: absolute;
+  inset: -25% -10%;
+  background-size: cover;
+  background-position: center;
+  filter: blur(18px) brightness(0.75) saturate(1.1);
+  opacity: 0.5;
+  will-change: transform;
+  z-index: 0;
+}
+
+.impact-text-mask-word {
+  position: relative;
+  font-size: clamp(4rem, 16vw, 11rem);
+  font-weight: 900;
+  line-height: 0.88;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin: 0;
+  background-size: cover;
+  background-position: center;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 2px var(--bg-cream);
+  z-index: 1;
+}
+
+.impact-statement-tagline {
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.6;
+  max-width: 36rem;
+  color: var(--bg-cream);
+  opacity: 0.92;
+}
+
+/* ============================================
+   RESPONSIVE — scroll-effects additions
+   ============================================ */
+@media (max-width: 900px) {
+  .sticky-showcase-grid {
+    display: block;
+  }
+
+  .sticky-showcase-sticky-col {
+    position: static;
+  }
+
+  .sticky-showcase-sticky-inner {
+    position: static;
+    display: block;
+  }
+
+  .sticky-showcase-textblock {
+    position: static;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    pointer-events: auto;
+    margin-bottom: 1.5rem;
+    box-shadow: 5px 5px 0px var(--color-dark);
+  }
+
+  .sticky-showcase-progress {
+    display: none;
+  }
+
+  .sticky-showcase-track-col {
+    display: none;
+  }
+}
+
+@media (max-width: 1024px) {
+  .hero-col-photo {
+    grid-column: span 12;
+  }
+  .hero-col-story {
+    grid-column: span 12;
+  }
+  .impact-text-mask-word {
+    -webkit-text-stroke: 1.5px var(--bg-cream);
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-cols-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .hero-col-photo,
+  .hero-col-story {
+    grid-column: span 1;
+  }
+
+  .method-diagram-row {
+    justify-content: center;
+    text-align: center;
+  }
+  .method-diagram-intro {
+    flex-basis: 100%;
+    text-align: center;
+  }
+  .method-diagram-intro p {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .method-orbit {
+    width: 16rem;
+    height: 16rem;
+    margin: 0 auto;
+  }
+  .method-orbit-node {
+    transform: translate(-50%, -50%) rotate(var(--orbit-angle)) translate(0, -6.9rem) rotate(calc(-1 * var(--orbit-angle)));
+    font-size: 0.6rem;
+    padding: 0.45rem 0.75rem;
+  }
+  .method-orbit-center {
+    width: 3.5rem;
+    height: 3.5rem;
+    font-size: 1rem;
+  }
+
+  .impact-statement {
+    padding: 4.5rem 1.25rem 5.5rem;
+    clip-path: polygon(0 1.5rem, 100% 0, 100% calc(100% - 1.5rem), 0 100%);
+  }
+  .impact-statement-tagline {
+    font-size: 0.95rem;
+  }
+}

@@ -41,7 +41,7 @@ export default function Workflow() {
       <HorizontalScrollSection
         header={
           <>
-            <span className="section-label">Paso a Paso</span>
+            <span className="section-label" data-reveal>Paso a Paso</span>
             <h2 className="section-title" style={{ marginBottom: 0 }}>
               ¿cómo funciona el método?
             </h2>

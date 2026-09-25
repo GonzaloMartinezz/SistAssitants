@@ -124,7 +124,7 @@ export default function Testimonials() {
       <div className="section-container" style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
 
         {/* Title */}
-        <div className="flex flex-col text-left select-none">
+        <div className="flex flex-col text-left select-none" data-reveal>
           <span className="section-label">Resultados Reales</span>
           <h2 className="section-title">
             mis alumnos hablan

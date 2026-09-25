@@ -32,7 +32,7 @@ export default function Recipes({ recipes, activeFilter, setActiveFilter }) {
 
       <div className="section-container" style={{ paddingBottom: 0, display: 'flex', flexDirection: 'column', gap: '2rem' }}>
         {/* Title */}
-        <div className="flex flex-col text-left select-none">
+        <div className="flex flex-col text-left select-none" data-reveal>
           <span className="section-label">Combustible Saludable</span>
           <h2 className="section-title">
             comidas

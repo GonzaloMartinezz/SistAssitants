@@ -67,7 +67,7 @@ export default function News() {
       <HorizontalScrollSection
         header={
           <>
-            <span className="section-label">Blog & Novedades</span>
+            <span className="section-label" data-reveal>Blog & Novedades</span>
             <h2 className="section-title" style={{ color: 'var(--bg-cream)' }}>
               noticias
             </h2>

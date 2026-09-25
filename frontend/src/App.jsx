@@ -3,6 +3,8 @@ import Nav from './components/layout/Nav';
 import Ticker from './components/layout/Ticker';
 import SectionNav from './components/layout/SectionNav';
 import Hero from './components/sections/Hero';
+import ImpactStatement from './components/sections/ImpactStatement';
+import MethodShowcase from './components/sections/MethodShowcase';
 import Workflow from './components/sections/Workflow';
 import FeaturedPlans from './components/sections/FeaturedPlans';
 import Calculator from './components/sections/Calculator';
@@ -16,6 +18,7 @@ import AdminPanel from './components/sections/AdminPanel';
 import AthletePortal from './components/sections/AthletePortal';
 import { ShieldCheck, Mail, Heart, Camera, MessageCircle } from 'lucide-react';
 import { api } from './services/api';
+import useScrollReveal from './hooks/useScrollReveal';
 
 const SEED_RECIPES = [
   {
@@ -281,6 +284,11 @@ function App() {
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [activeRecipeFilter, setActiveRecipeFilter] = useState('all');
 
+  // Global fade/slide-in-on-scroll system for every [data-reveal] element
+  // on the page (see hooks/useScrollReveal.js) — must run unconditionally,
+  // before any of the route-specific early returns below.
+  useScrollReveal();
+
   // Simple state routing system using location hash
   const [currentRoute, setCurrentRoute] = useState(window.location.hash || '#/');
 
@@ -423,6 +431,8 @@ function App() {
           <Ticker />
 
           <Hero />
+          <ImpactStatement />
+          <MethodShowcase />
           <Workflow />
           <FeaturedPlans />
           <Recipes

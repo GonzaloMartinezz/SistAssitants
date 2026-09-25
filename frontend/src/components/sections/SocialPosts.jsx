@@ -89,7 +89,7 @@ export default function SocialPosts() {
       <HorizontalScrollSection
         header={
           <>
-            <span className="section-label">Contenido & Comunidad</span>
+            <span className="section-label" data-reveal>Contenido & Comunidad</span>
             <h2 className="section-title">posteos</h2>
             <p style={{ fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: '0.9rem', lineHeight: 1.6, color: 'var(--color-muted)' }}>
               Un adelanto de lo último que comparto en redes: recetas, mitos que desarmo,

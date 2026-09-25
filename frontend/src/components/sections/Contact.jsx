@@ -40,7 +40,7 @@ export default function Contact({ bookings, onAddBooking }) {
     <section id="contact" className="section-container" style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
 
       {/* Title */}
-      <div className="flex flex-col text-left select-none">
+      <div className="flex flex-col text-left select-none" data-reveal>
         <span className="section-label">Estoy Para Ayudarte</span>
         <h2 className="section-title">contacto</h2>
         <p style={{ fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: '0.9rem', color: 'var(--color-muted)', maxWidth: '38rem' }}>
