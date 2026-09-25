@@ -1,20 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronUp, ChevronDown, ArrowUp } from 'lucide-react';
+import useScrollToSection from '../../hooks/useScrollToSection';
 
 const SECTIONS = [
   { id: 'hero', label: 'Inicio' },
   { id: 'workflow', label: 'Método' },
   { id: 'plans', label: 'Planes' },
-  { id: 'calculator', label: 'Calculadora' },
-  { id: 'recipes', label: 'Recetas' },
+  { id: 'recipes', label: 'Comidas' },
+  { id: 'news', label: 'Noticias' },
+  { id: 'posts', label: 'Posteos' },
+  { id: 'social', label: 'Redes' },
   { id: 'testimonials', label: 'Alumnos' },
-  { id: 'calendar', label: 'Agenda' },
-  { id: 'admin', label: 'Panel' }
+  { id: 'calculator', label: 'Calculadora' },
+  { id: 'contact', label: 'Contacto' }
 ];
 
 export default function SectionNav() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showNav, setShowNav] = useState(false);
+  const scrollToSection = useScrollToSection();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,19 +38,11 @@ export default function SectionNav() {
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const scrollToSection = (id) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  const scrollToTop = () => scrollToSection('hero', { offset: 0 });
 
   const goPrev = () => {
     if (currentIndex > 0) {

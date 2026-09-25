@@ -1,71 +1,122 @@
-import React, { useState } from 'react';
-import { 
-  Home, 
-  Award, 
-  TrendingUp, 
-  Calculator, 
-  BookOpen, 
-  Calendar, 
-  LayoutDashboard, 
+import React, { useState, useEffect } from 'react';
+import {
+  Home,
+  Award,
+  TrendingUp,
+  Calculator,
+  BookOpen,
+  Newspaper,
+  Image,
+  Share2,
+  Mail,
+  LayoutDashboard,
   CheckCircle2,
   Menu,
   X,
   Users
 } from 'lucide-react';
+import useScrollToSection from '../../hooks/useScrollToSection';
 
-export default function Sidebar({ activeSection, setActiveSection }) {
+const PAGE_SECTIONS = [
+  { id: 'hero', label: 'Inicio', icon: Home, color: 'var(--pastel-pink)' },
+  { id: 'workflow', label: 'Método', icon: Award, color: 'var(--pastel-blue)' },
+  { id: 'plans', label: 'Planes', icon: TrendingUp, color: 'var(--pastel-green)' },
+  { id: 'recipes', label: 'Comidas', icon: BookOpen, color: 'var(--pastel-peach)' },
+  { id: 'news', label: 'Noticias', icon: Newspaper, color: 'var(--pastel-yellow)' },
+  { id: 'posts', label: 'Posteos', icon: Image, color: 'var(--pastel-pink)' },
+  { id: 'social', label: 'Redes', icon: Share2, color: 'var(--pastel-blue)' },
+  { id: 'testimonials', label: 'Alumnos', icon: Users, color: 'var(--pastel-green)' },
+  { id: 'calculator', label: 'Calculadora', icon: Calculator, color: 'var(--pastel-yellow)' },
+  { id: 'contact', label: 'Contacto', icon: Mail, color: 'var(--pastel-peach)' }
+];
+
+const HASH_ROUTES = [
+  { id: 'plan-elite', hash: '#/plan-elite', label: 'Mi Plan Élite', icon: Award, color: 'var(--pastel-pink)', special: true, badge: 'ATLETA' },
+  { id: 'admin', hash: '#/admin', label: 'Panel Nutri', icon: LayoutDashboard, color: 'var(--kraft-brown-light)', special: true, badge: 'PRO' }
+];
+
+export default function Sidebar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeId, setActiveId] = useState('hero');
+  const scrollToSection = useScrollToSection();
 
-  const menuItems = [
-    { id: 'hero', label: 'Inicio', icon: Home, color: 'var(--pastel-pink)' },
-    { id: 'workflow', label: 'Método', icon: Award, color: 'var(--pastel-blue)' },
-    { id: 'plans', label: 'Planes', icon: TrendingUp, color: 'var(--pastel-green)' },
-    { id: 'athlete-portal', label: 'Mi Plan Élite', icon: Award, color: 'var(--pastel-pink)' },
-    { id: 'calculator', label: 'Calculadora', icon: Calculator, color: 'var(--pastel-yellow)' },
-    { id: 'recipes', label: 'Recetas', icon: BookOpen, color: 'var(--pastel-peach)' },
-    { id: 'testimonials', label: 'Alumnos', icon: Users, color: 'var(--pastel-green)' },
-    { id: 'calendar', label: 'Agenda Cita', icon: Calendar, color: 'var(--pastel-blue)' },
-    { id: 'admin', label: 'Panel Nutri', icon: LayoutDashboard, color: 'var(--kraft-brown-light)', special: true },
-  ];
+  // Track which in-page section is currently in view (only meaningful on the public route)
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.location.hash && window.location.hash !== '#/') return;
+      const scrollPosition = window.scrollY + window.innerHeight / 3;
+      for (let i = PAGE_SECTIONS.length - 1; i >= 0; i--) {
+        const el = document.getElementById(PAGE_SECTIONS[i].id);
+        if (el && el.offsetTop <= scrollPosition) {
+          setActiveId(PAGE_SECTIONS[i].id);
+          break;
+        }
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-  const handleNavClick = (id) => {
-    if (id === 'admin') {
-      setMobileMenuOpen(false);
-      window.location.hash = '#/admin';
-      return;
-    }
-
-    setActiveSection(id);
+  const handleSectionClick = (id) => {
     setMobileMenuOpen(false);
-    
-    // Ensure we are on the public route before scrolling
+
+    const goAndScroll = () => scrollToSection(id);
+
     if (window.location.hash && window.location.hash !== '#/') {
       window.location.hash = '#/';
-      setTimeout(() => {
-        const element = document.getElementById(id);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 150);
+      setTimeout(goAndScroll, 150);
     } else {
-      const element = document.getElementById(id);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
+      goAndScroll();
     }
+  };
+
+  const handleHashClick = (hash) => {
+    setMobileMenuOpen(false);
+    window.location.hash = hash;
+  };
+
+  const renderItem = (item, isRoute) => {
+    const Icon = item.icon;
+    const isActive = isRoute
+      ? window.location.hash === item.hash
+      : activeId === item.id;
+
+    return (
+      <button
+        key={item.id}
+        onClick={() => (isRoute ? handleHashClick(item.hash) : handleSectionClick(item.id))}
+        className="sidebar-item-btn"
+        style={{
+          backgroundColor: isActive ? item.color : '#ffffff',
+          transform: isActive ? 'translate(-3px, -3px)' : 'none',
+          boxShadow: isActive ? '5px 5px 0px var(--color-dark)' : '3px 3px 0px var(--color-dark)'
+        }}
+      >
+        <div className="sidebar-icon-pad">
+          <Icon size={16} />
+        </div>
+        <span>{item.label}</span>
+        {item.special && (
+          <span className="badge-neo font-tech" style={{ marginLeft: 'auto', backgroundColor: '#111111', color: '#f6f4ee', border: 'none', fontSize: '0.6rem' }}>
+            {item.badge}
+          </span>
+        )}
+      </button>
+    );
   };
 
   return (
     <>
       {/* Mobile Top Bar Header */}
       <header className="nav-mobile-header">
-        <div 
+        <div
           className="mobile-logo-text font-display"
-          onClick={() => handleNavClick('hero')}
+          onClick={() => handleSectionClick('hero')}
         >
           Guadalupe.
         </div>
-        <button 
+        <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           className="mobile-menu-btn"
         >
@@ -76,33 +127,9 @@ export default function Sidebar({ activeSection, setActiveSection }) {
       {/* Mobile Menu Overlay Drawer */}
       {mobileMenuOpen && (
         <div className="mobile-menu-overlay">
-          {menuItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = activeSection === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => handleNavClick(item.id)}
-                className="sidebar-item-btn"
-                style={{ 
-                  backgroundColor: isActive ? item.color : '#ffffff',
-                  transform: isActive ? 'translate(-2px, -2px)' : 'none',
-                  boxShadow: isActive ? '4px 4px 0px var(--color-dark)' : '2px 2px 0px var(--color-dark)'
-                }}
-              >
-                <div className="sidebar-icon-pad">
-                  <Icon size={20} />
-                </div>
-                <span>{item.label}</span>
-                {item.special && (
-                  <span className="badge-neo font-tech" style={{ marginLeft: 'auto', backgroundColor: '#111111', color: '#f6f4ee', border: 'none' }}>
-                    Admin
-                  </span>
-                )}
-              </button>
-            );
-          })}
-          
+          {PAGE_SECTIONS.map((item) => renderItem(item, false))}
+          {HASH_ROUTES.map((item) => renderItem(item, true))}
+
           <div className="sidebar-status-panel" style={{ marginTop: 'auto' }}>
             <div className="sidebar-status-header">
               <CheckCircle2 size={14} /> Base de Datos Conectada
@@ -118,9 +145,9 @@ export default function Sidebar({ activeSection, setActiveSection }) {
       <aside className="nav-sidebar">
         <div className="sidebar-top">
           {/* Logo */}
-          <div 
+          <div
             className="sidebar-logo"
-            onClick={() => handleNavClick('hero')}
+            onClick={() => handleSectionClick('hero')}
           >
             <span className="sidebar-logo-text">
               Guadalupe
@@ -132,32 +159,9 @@ export default function Sidebar({ activeSection, setActiveSection }) {
 
           {/* Sidebar menu navigation links */}
           <nav className="sidebar-nav">
-            {menuItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = activeSection === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => handleNavClick(item.id)}
-                  className="sidebar-item-btn"
-                  style={{ 
-                    backgroundColor: isActive ? item.color : '#ffffff',
-                    transform: isActive ? 'translate(-3px, -3px)' : 'none',
-                    boxShadow: isActive ? '5px 5px 0px var(--color-dark)' : '3px 3px 0px var(--color-dark)'
-                  }}
-                >
-                  <div className="sidebar-icon-pad">
-                    <Icon size={16} />
-                  </div>
-                  <span>{item.label}</span>
-                  {item.special && (
-                    <span className="badge-neo font-tech" style={{ marginLeft: 'auto', backgroundColor: '#111111', color: '#f6f4ee', border: 'none', fontSize: '0.6rem' }}>
-                      PRO
-                    </span>
-                  )}
-                </button>
-              );
-            })}
+            {PAGE_SECTIONS.map((item) => renderItem(item, false))}
+            <div className="sidebar-divider" style={{ margin: '0.35rem 0' }}></div>
+            {HASH_ROUTES.map((item) => renderItem(item, true))}
           </nav>
         </div>
 

@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { Check, X } from 'lucide-react';
+import useScrollToSection from '../../hooks/useScrollToSection';
+import HorizontalScrollSection from '../common/HorizontalScrollSection';
 
-export default function FeaturedPlans({ onNavigate }) {
+export default function FeaturedPlans() {
   const [selectedPlan, setSelectedPlan] = useState(null);
+  const scrollToSection = useScrollToSection();
 
   const plans = [
     {
@@ -93,8 +96,8 @@ export default function FeaturedPlans({ onNavigate }) {
             </p>
           </div>
           
-          <button 
-            onClick={() => onNavigate('calculator')}
+          <button
+            onClick={() => scrollToSection('calculator')}
             className="btn-neo btn-accent"
           >
             Calcular mis Calorías Gratis ⚡
@@ -117,13 +120,26 @@ export default function FeaturedPlans({ onNavigate }) {
 
       </div>
 
-      {/* 4 Cards grid */}
-      <div className="plans-grid">
+      {/* Plans horizontal gallery */}
+      <HorizontalScrollSection
+        header={
+          <>
+            <span className="section-label">Elegí tu Camino</span>
+            <h3 className="font-display" style={{ fontSize: '1.75rem', fontWeight: 900, margin: 0 }}>
+              4 protocolos, un mismo método
+            </h3>
+            <p style={{ fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: '0.85rem', color: 'var(--color-muted)' }}>
+              Deslizá para conocer cada plan y encontrá el que se adapta a tu disciplina.
+            </p>
+          </>
+        }
+        trackClassName="plans-track"
+      >
         {plans.map((plan) => (
-          <div 
+          <div
             key={plan.id}
             className="plan-card"
-            style={{ backgroundColor: plan.bgColor }}
+            style={{ backgroundColor: plan.bgColor, width: '18rem', flex: '0 0 18rem' }}
           >
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', textAlign: 'left' }}>
               <h4>{plan.title}</h4>
@@ -135,8 +151,8 @@ export default function FeaturedPlans({ onNavigate }) {
                 {plan.price}
                 <span className="plan-price-sub"> / {plan.period}</span>
               </span>
-              
-              <button 
+
+              <button
                 onClick={() => setSelectedPlan(plan)}
                 className="btn-neo"
                 style={{ padding: '0.4rem 0.8rem', fontSize: '0.7rem', backgroundColor: '#ffffff' }}
@@ -146,7 +162,7 @@ export default function FeaturedPlans({ onNavigate }) {
             </div>
           </div>
         ))}
-      </div>
+      </HorizontalScrollSection>
 
       {/* Plans details modal drawer */}
       {selectedPlan && (
@@ -197,10 +213,10 @@ export default function FeaturedPlans({ onNavigate }) {
                 <span className="plan-price-sub"> / {selectedPlan.period}</span>
               </span>
               
-              <button 
+              <button
                 onClick={() => {
                   setSelectedPlan(null);
-                  onNavigate('calendar');
+                  scrollToSection('contact');
                 }}
                 className="btn-neo btn-accent"
               >

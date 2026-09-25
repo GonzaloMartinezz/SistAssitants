@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { BookOpen, Clock, X, ChevronRight, CheckSquare } from 'lucide-react';
+import HorizontalScrollSection from '../common/HorizontalScrollSection';
 
 export default function Recipes({ recipes, activeFilter, setActiveFilter }) {
   const [selectedRecipe, setSelectedRecipe] = useState(null);
@@ -27,117 +28,122 @@ export default function Recipes({ recipes, activeFilter, setActiveFilter }) {
   };
 
   return (
-    <section id="recipes" className="section-container" style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
-      
-      {/* Title */}
-      <div className="flex flex-col text-left select-none">
-        <span className="section-label">Combustible Saludable</span>
-        <h2 className="section-title">
-          Recetas de Rendimiento
-        </h2>
-      </div>
+    <section id="recipes" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
 
-      {/* Dynamic Filters */}
-      <div className="filter-row">
-        {filters.map((f) => (
-          <button
-            key={f.id}
-            onClick={() => setActiveFilter(f.id)}
-            className="btn-neo"
-            style={{
-              fontSize: '0.85rem',
-              padding: '0.6rem 1.1rem',
-              backgroundColor: activeFilter === f.id ? 'var(--pastel-peach)' : 'white',
-              transform: activeFilter === f.id ? 'translate(-2px, -2px)' : 'none',
-              boxShadow: activeFilter === f.id ? '4px 4px 0px var(--color-dark)' : '2px 2px 0px var(--color-dark)'
-            }}
-          >
-            {f.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Empty State */}
-      {filteredRecipes.length === 0 && (
-        <div className="step-card" style={{ padding: '3rem', width: '100%' }}>
-          <BookOpen size={48} style={{ color: 'var(--color-muted)', marginBottom: '1rem' }} />
-          <h3>No hay recetas cargadas</h3>
-          <p>
-            ¡Puedes añadir tus propias recetas en la sección "Panel Nutri" del menú!
-          </p>
+      <div className="section-container" style={{ paddingBottom: 0, display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+        {/* Title */}
+        <div className="flex flex-col text-left select-none">
+          <span className="section-label">Combustible Saludable</span>
+          <h2 className="section-title">
+            comidas
+          </h2>
         </div>
-      )}
 
-      {/* Recipes Grid */}
-      <div className="recipes-grid">
-        {filteredRecipes.map((recipe) => (
-          <div
-            key={recipe.id}
-            className="recipe-card"
-          >
-            {/* Card Header area */}
-            <div 
-              className="recipe-card-header"
-              style={{ backgroundColor: getCategoryColor(recipe.category) }}
+        {/* Dynamic Filters */}
+        <div className="filter-row">
+          {filters.map((f) => (
+            <button
+              key={f.id}
+              onClick={() => setActiveFilter(f.id)}
+              className="btn-neo"
+              style={{
+                fontSize: '0.85rem',
+                padding: '0.6rem 1.1rem',
+                backgroundColor: activeFilter === f.id ? 'var(--pastel-peach)' : 'white',
+                transform: activeFilter === f.id ? 'translate(-2px, -2px)' : 'none',
+                boxShadow: activeFilter === f.id ? '4px 4px 0px var(--color-dark)' : '2px 2px 0px var(--color-dark)'
+              }}
             >
-              <div className="recipe-header-top">
-                <span className="badge-neo font-tech" style={{ backgroundColor: '#ffffff', border: '2px solid var(--color-dark)' }}>
-                  {recipe.category === 'pre' && '⚡ Pre-Entreno'}
-                  {recipe.category === 'post' && '🔥 Post-Entreno'}
-                  {recipe.category === 'snack' && '🍿 Snack Prot.'}
-                  {recipe.category === 'almuerzo' && '🥗 Comida Élite'}
-                </span>
-                
-                <div className="font-tech" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.7rem', fontWeight: 'bold', opacity: 0.8 }}>
-                  <Clock size={12} /> {recipe.time} min
-                </div>
-              </div>
+              {f.label}
+            </button>
+          ))}
+        </div>
 
-              <h3 className="recipe-card-title">
-                {recipe.title}
-              </h3>
-            </div>
-
-            {/* Card Description & Info */}
-            <div className="recipe-card-body">
-              <p className="recipe-card-desc">
-                {recipe.desc}
-              </p>
-
-              <div className="sidebar-divider"></div>
-
-              {/* Simple row of mini macros */}
-              <div className="recipe-mini-macros">
-                <div className="recipe-mini-macro-item">
-                  <span style={{ opacity: 0.6, fontSize: '0.55rem' }}>ENERGÍA</span>
-                  <span>{recipe.cals} kcal</span>
-                </div>
-                <div className="recipe-mini-divider"></div>
-                <div className="recipe-mini-macro-item">
-                  <span style={{ color: 'var(--kraft-brown)', fontSize: '0.55rem' }}>PROTEÍNA</span>
-                  <span>{recipe.protein}g</span>
-                </div>
-                <div className="recipe-mini-divider"></div>
-                <div className="recipe-mini-macro-item">
-                  <span style={{ color: '#b45309', fontSize: '0.55rem' }}>CARBOS</span>
-                  <span>{recipe.carbs}g</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Preparation Button trigger */}
-            <div className="recipe-btn-pad">
-              <button
-                onClick={() => setSelectedRecipe(recipe)}
-                className="btn-neo"
-                style={{ width: '100%', backgroundColor: 'var(--bg-cream)' }}
-              >
-                Ver Preparación <ChevronRight size={14} />
-              </button>
-            </div>
+        {/* Empty State */}
+        {filteredRecipes.length === 0 && (
+          <div className="step-card" style={{ padding: '3rem', width: '100%' }}>
+            <BookOpen size={48} style={{ color: 'var(--color-muted)', marginBottom: '1rem' }} />
+            <h3>No hay comidas cargadas</h3>
+            <p>
+              ¡Puedes añadir tus propias recetas en la sección "Panel Nutri" del menú!
+            </p>
           </div>
-        ))}
+        )}
       </div>
+
+      {/* Comidas horizontal gallery */}
+      {filteredRecipes.length > 0 && (
+        <HorizontalScrollSection trackClassName="recipes-track">
+          {filteredRecipes.map((recipe) => (
+            <div
+              key={recipe.id}
+              className="recipe-card"
+              style={{ width: '20rem', flex: '0 0 20rem' }}
+            >
+              {/* Card Header area */}
+              <div
+                className="recipe-card-header"
+                style={{ backgroundColor: getCategoryColor(recipe.category) }}
+              >
+                <div className="recipe-header-top">
+                  <span className="badge-neo font-tech" style={{ backgroundColor: '#ffffff', border: '2px solid var(--color-dark)' }}>
+                    {recipe.category === 'pre' && '⚡ Pre-Entreno'}
+                    {recipe.category === 'post' && '🔥 Post-Entreno'}
+                    {recipe.category === 'snack' && '🍿 Snack Prot.'}
+                    {recipe.category === 'almuerzo' && '🥗 Comida Élite'}
+                  </span>
+
+                  <div className="font-tech" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.7rem', fontWeight: 'bold', opacity: 0.8 }}>
+                    <Clock size={12} /> {recipe.time} min
+                  </div>
+                </div>
+
+                <h3 className="recipe-card-title">
+                  {recipe.title}
+                </h3>
+              </div>
+
+              {/* Card Description & Info */}
+              <div className="recipe-card-body">
+                <p className="recipe-card-desc">
+                  {recipe.desc}
+                </p>
+
+                <div className="sidebar-divider"></div>
+
+                {/* Simple row of mini macros */}
+                <div className="recipe-mini-macros">
+                  <div className="recipe-mini-macro-item">
+                    <span style={{ opacity: 0.6, fontSize: '0.55rem' }}>ENERGÍA</span>
+                    <span>{recipe.cals} kcal</span>
+                  </div>
+                  <div className="recipe-mini-divider"></div>
+                  <div className="recipe-mini-macro-item">
+                    <span style={{ color: 'var(--kraft-brown)', fontSize: '0.55rem' }}>PROTEÍNA</span>
+                    <span>{recipe.protein}g</span>
+                  </div>
+                  <div className="recipe-mini-divider"></div>
+                  <div className="recipe-mini-macro-item">
+                    <span style={{ color: '#b45309', fontSize: '0.55rem' }}>CARBOS</span>
+                    <span>{recipe.carbs}g</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Preparation Button trigger */}
+              <div className="recipe-btn-pad">
+                <button
+                  onClick={() => setSelectedRecipe(recipe)}
+                  className="btn-neo"
+                  style={{ width: '100%', backgroundColor: 'var(--bg-cream)' }}
+                >
+                  Ver Preparación <ChevronRight size={14} />
+                </button>
+              </div>
+            </div>
+          ))}
+        </HorizontalScrollSection>
+      )}
 
       {/* Recipe details modal */}
       {selectedRecipe && (

@@ -1,7 +1,9 @@
 import React from 'react';
 import { Sparkles, Users, TrendingUp, Award, Dumbbell, Activity, Brain, ShieldAlert } from 'lucide-react';
+import useScrollToSection from '../../hooks/useScrollToSection';
 
-export default function Hero({ onNavigate }) {
+export default function Hero() {
+  const scrollToSection = useScrollToSection();
   const quickStats = [
     { icon: Users, value: '75+', label: 'Red de Amigos', color: 'var(--pastel-pink)' },
     { icon: TrendingUp, value: '100%', label: 'Cuidado de Salud', color: 'var(--pastel-blue)' },
@@ -103,15 +105,15 @@ export default function Hero({ onNavigate }) {
               <div className="hero-card-divider" style={{ height: '2px', backgroundColor: 'var(--color-dark)', opacity: '0.15', margin: '0.5rem 0' }}></div>
               
               <div className="hero-buttons-row" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
-                <button 
-                  onClick={() => onNavigate('calendar')}
+                <button
+                  onClick={() => scrollToSection('contact')}
                   className="btn-neo btn-neo-sm btn-accent"
                   style={{ fontSize: '0.75rem', padding: '0.45rem 0.9rem' }}
                 >
                   Agendar Consulta 📅
                 </button>
-                <button 
-                  onClick={() => onNavigate('athlete-portal')}
+                <button
+                  onClick={() => { window.location.hash = '#/plan-elite'; }}
                   className="btn-neo btn-neo-sm"
                   style={{ backgroundColor: 'var(--pastel-peach)', fontSize: '0.75rem', padding: '0.45rem 0.9rem' }}
                 >

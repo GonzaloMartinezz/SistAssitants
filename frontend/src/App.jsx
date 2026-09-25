@@ -7,11 +7,15 @@ import Workflow from './components/sections/Workflow';
 import FeaturedPlans from './components/sections/FeaturedPlans';
 import Calculator from './components/sections/Calculator';
 import Recipes from './components/sections/Recipes';
+import News from './components/sections/News';
+import SocialPosts from './components/sections/SocialPosts';
+import SocialLinks from './components/sections/SocialLinks';
 import Testimonials from './components/sections/Testimonials';
-import CalendarScheduler from './components/sections/CalendarScheduler';
+import Contact from './components/sections/Contact';
 import AdminPanel from './components/sections/AdminPanel';
 import AthletePortal from './components/sections/AthletePortal';
-import { ShieldCheck, Mail, Heart, AtSign, Phone } from 'lucide-react';
+import { ShieldCheck, Mail, Heart, Camera, MessageCircle } from 'lucide-react';
+import useScrollToSection from './hooks/useScrollToSection';
 import { api } from './services/api';
 
 const SEED_RECIPES = [
@@ -220,31 +224,169 @@ const SEED_BOOKINGS = [
   { id: 105, clientName: 'Federico Álvarez', sport: 'Running', day: 'Viernes', time: '09:00', date: '31 de mayo' }
 ];
 
-function App() {
-  const [activeSection, setActiveSection] = useState('hero');
+// Global Fixed Neobrutalist Navigation Bar (shown on every route)
+function GlobalNavBar({ currentRoute, scrollToSection }) {
+  const goHome = () => {
+    if (currentRoute !== '#/') {
+      window.location.hash = '#/';
+      setTimeout(() => scrollToSection('hero', { offset: 0 }), 150);
+    } else {
+      scrollToSection('hero', { offset: 0 });
+    }
+  };
 
+  const goToSection = (id) => {
+    if (currentRoute !== '#/') {
+      window.location.hash = '#/';
+      setTimeout(() => scrollToSection(id), 150);
+    } else {
+      scrollToSection(id);
+    }
+  };
+
+  return (
+    <div
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: '3.75rem',
+        backgroundColor: 'var(--bg-cream)',
+        borderBottom: '3px solid var(--color-dark)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '0 2rem',
+        zIndex: 9999,
+        boxShadow: '0px 2px 0px rgba(17,17,17,0.08)'
+      }}
+      className="select-none"
+    >
+      <div
+        onClick={goHome}
+        style={{ display: 'flex', flexDirection: 'column', cursor: 'pointer', textAlign: 'left' }}
+      >
+        <span className="font-display" style={{ fontSize: '1.4rem', fontWeight: '900', lineHeight: 1 }}>Guadalupe Martínez</span>
+        <span className="font-tech" style={{ fontSize: '0.55rem', fontWeight: 'bold', color: 'var(--kraft-brown)', textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: '0.2rem' }}>
+          Nutrición Deportiva & Salud
+        </span>
+      </div>
+
+      <div className="global-nav-actions" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        <button
+          onClick={goHome}
+          className="btn-neo"
+          style={{
+            padding: '0.35rem 0.75rem',
+            fontSize: '0.75rem',
+            backgroundColor: currentRoute === '#/' ? 'var(--pastel-yellow)' : '#ffffff',
+            transform: currentRoute === '#/' ? 'translate(-1px, -1px)' : 'none',
+            boxShadow: currentRoute === '#/' ? '2px 2px 0px var(--color-dark)' : '1px 1px 0px var(--color-dark)'
+          }}
+        >
+          🏠 Inicio
+        </button>
+
+        <button
+          onClick={() => goToSection('workflow')}
+          className="btn-neo"
+          style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', backgroundColor: '#ffffff' }}
+        >
+          📋 Método
+        </button>
+
+        <button
+          onClick={() => { window.location.hash = '#/plan-elite'; }}
+          className="btn-neo"
+          style={{
+            padding: '0.35rem 0.75rem',
+            fontSize: '0.75rem',
+            backgroundColor: currentRoute === '#/plan-elite' ? 'var(--pastel-pink)' : '#ffffff',
+            transform: currentRoute === '#/plan-elite' ? 'translate(-1px, -1px)' : 'none',
+            boxShadow: currentRoute === '#/plan-elite' ? '2px 2px 0px var(--color-dark)' : '1px 1px 0px var(--color-dark)'
+          }}
+        >
+          ⚡ Mi Plan Élite
+        </button>
+
+        <button
+          onClick={() => { window.location.hash = '#/admin'; }}
+          className="btn-neo"
+          style={{
+            padding: '0.35rem 0.75rem',
+            fontSize: '0.75rem',
+            backgroundColor: currentRoute === '#/admin' ? 'var(--pastel-peach)' : '#ffffff',
+            transform: currentRoute === '#/admin' ? 'translate(-1px, -1px)' : 'none',
+            boxShadow: currentRoute === '#/admin' ? '2px 2px 0px var(--color-dark)' : '1px 1px 0px var(--color-dark)'
+          }}
+        >
+          🛡️ Consola Nutri (Admin)
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="footer-neo select-none">
+      <div className="footer-top-row">
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+          <span className="font-display" style={{ fontSize: '1.75rem', fontWeight: '900', lineHeight: 1 }}>Guadalupe.</span>
+          <span className="font-tech text-xs uppercase tracking-wider" style={{ fontWeight: 'bold', color: 'var(--kraft-brown)' }}>
+            Licenciatura en Nutrición & Comunidad Saludable
+          </span>
+        </div>
+
+        <div className="footer-links-col">
+          <a href="https://instagram.com/guada_nutrisalud" target="_blank" rel="noreferrer">
+            <Camera size={14} /> @guada_nutrisalud
+          </a>
+          <a href="mailto:guada@nutri.com">
+            <Mail size={14} /> guada@nutri.com
+          </a>
+          <a href="https://wa.me/5491155556789" target="_blank" rel="noreferrer" style={{ color: 'var(--color-dark)' }}>
+            <MessageCircle size={14} /> +54 9 11 5555-6789
+          </a>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#059669' }}>
+            <ShieldCheck size={14} /> Futura Licenciada en Nutrición
+          </span>
+        </div>
+
+      </div>
+
+      {/* Footer Quick Info Row */}
+      <div className="footer-services-row">
+        <div className="footer-service-chip">💪 Planificación de Cargas</div>
+        <div className="footer-service-chip">🌱 Alimentación Paso a Paso</div>
+        <div className="footer-service-chip">🔥 Recomposición Corporal</div>
+        <div className="footer-service-chip">🏃 Salud y Rendimiento</div>
+        <div className="footer-service-chip">🤝 Red de Apoyo Mutuo</div>
+        <div className="footer-service-chip">📊 Antropometría & Control</div>
+      </div>
+
+      <div className="sidebar-divider" style={{ margin: '1.5rem auto', maxWidth: '1200px' }}></div>
+
+      <div className="footer-meta-row">
+        <span>© {new Date().getFullYear()} Guadalupe Martínez. Todos los derechos reservados.</span>
+        <div className="footer-meta-right">
+          Desarrollado con <Heart size={10} style={{ color: '#ef4444', fill: '#ef4444' }} /> para potenciar tu salud.
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+function App() {
   const [recipes, setRecipes] = useState([]);
   const [bookings, setBookings] = useState([]);
   const [patients, setPatients] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [activeRecipeFilter, setActiveRecipeFilter] = useState('all');
 
-  const horizontalRef = React.useRef(null);
-
-  useEffect(() => {
-    const panels = ['workflow', 'plans', 'recipes', 'calculator'];
-    if (panels.includes(activeSection) && horizontalRef.current) {
-      const index = panels.indexOf(activeSection);
-      const container = horizontalRef.current;
-      setTimeout(() => {
-        const panelWidth = container.offsetWidth;
-        container.scrollTo({
-          left: index * panelWidth,
-          behavior: 'smooth'
-        });
-      }, 50);
-    }
-  }, [activeSection]);
+  const scrollToSection = useScrollToSection();
 
   // Simple state routing system using location hash
   const [currentRoute, setCurrentRoute] = useState(window.location.hash || '#/');
@@ -264,19 +406,21 @@ function App() {
     const loadData = async () => {
       try {
         const fetchedRecipes = await api.getRecipes();
-        setRecipes(fetchedRecipes);
+        setRecipes(fetchedRecipes.length > 0 ? fetchedRecipes : SEED_RECIPES);
 
         const fetchedBookings = await api.getBookings();
-        setBookings(fetchedBookings);
+        setBookings(fetchedBookings.length > 0 ? fetchedBookings : SEED_BOOKINGS);
 
         const fetchedPatients = await api.getPatients();
         setPatients(fetchedPatients);
-        
+
         if (fetchedPatients.length > 0) {
           setSelectedPatient(fetchedPatients[0]);
         }
       } catch (error) {
         console.error('Error loading initial data from API service', error);
+        setRecipes(SEED_RECIPES);
+        setBookings(SEED_BOOKINGS);
       }
     };
     loadData();
@@ -339,100 +483,17 @@ function App() {
     }
   };
 
-  // Helper to handle smooth navigation shortcuts in top nav
-  const navigateToSection = (sectionId) => {
-    setActiveSection(sectionId);
-    if (window.location.hash !== '#/') {
-      window.location.hash = '#/';
-    }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  // Global Fixed Neobrutalist Navigation Bar
-  const GlobalNavBar = () => (
-    <div 
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        height: '3.75rem',
-        backgroundColor: 'var(--bg-cream)',
-        borderBottom: '3px solid var(--color-dark)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0 2rem',
-        zIndex: 9999,
-        boxShadow: '0px 2px 0px rgba(17,17,17,0.08)'
-      }}
-      className="select-none"
-    >
-      <div 
-        onClick={() => { window.location.hash = '#/'; }} 
-        style={{ display: 'flex', flexDirection: 'column', cursor: 'pointer', textAlign: 'left' }}
-      >
-        <span className="font-display" style={{ fontSize: '1.4rem', fontWeight: '900', lineHeight: 1 }}>Guadalupe Martínez</span>
-        <span className="font-tech" style={{ fontSize: '0.55rem', fontWeight: 'bold', color: 'var(--kraft-brown)', textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: '0.2rem' }}>
-          Nutrición Deportiva & Salud
-        </span>
-      </div>
-
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-        <button 
-          onClick={() => { window.location.hash = '#/'; }}
-          className="btn-neo"
-          style={{
-            padding: '0.35rem 0.75rem',
-            fontSize: '0.75rem',
-            backgroundColor: currentRoute === '#/' ? 'var(--pastel-yellow)' : '#ffffff',
-            transform: currentRoute === '#/' ? 'translate(-1px, -1px)' : 'none',
-            boxShadow: currentRoute === '#/' ? '2px 2px 0px var(--color-dark)' : '1px 1px 0px var(--color-dark)'
-          }}
-        >
-          🏠 Inicio Atleta
-        </button>
-        
-        <button 
-          onClick={() => navigateToSection('workflow')}
-          className="btn-neo"
-          style={{
-            padding: '0.35rem 0.75rem',
-            fontSize: '0.75rem',
-            backgroundColor: '#ffffff'
-          }}
-        >
-          📋 Método
-        </button>
-
-        <button 
-          onClick={() => { window.location.hash = '#/admin'; }}
-          className="btn-neo"
-          style={{
-            padding: '0.35rem 0.75rem',
-            fontSize: '0.75rem',
-            backgroundColor: currentRoute === '#/admin' ? 'var(--pastel-peach)' : '#ffffff',
-            transform: currentRoute === '#/admin' ? 'translate(-1px, -1px)' : 'none',
-            boxShadow: currentRoute === '#/admin' ? '2px 2px 0px var(--color-dark)' : '1px 1px 0px var(--color-dark)'
-          }}
-        >
-          🛡️ Consola Nutri (Admin)
-        </button>
-      </div>
-    </div>
-  );
-
-  // Layout 1: Leticia's Admin Dashboard Console Portal (Route: #/admin)
+  // Layout 1: Admin Dashboard Console Portal (Route: #/admin)
   if (currentRoute === '#/admin') {
     return (
       <div style={{ paddingTop: '3.75rem', minHeight: '100vh', backgroundColor: 'var(--bg-cream)' }}>
-        <GlobalNavBar />
-        
+        <GlobalNavBar currentRoute={currentRoute} scrollToSection={scrollToSection} />
+
         <div style={{ padding: '2rem 1.5rem', maxWidth: '1200px', margin: '0 auto' }}>
-          <AdminPanel 
-            recipes={recipes} 
-            bookings={bookings} 
-            onAddRecipe={handleAddRecipe} 
+          <AdminPanel
+            recipes={recipes}
+            bookings={bookings}
+            onAddRecipe={handleAddRecipe}
             onDeleteBooking={handleDeleteBooking}
             patients={patients}
             onAddPatient={handleAddPatient}
@@ -446,127 +507,45 @@ function App() {
     );
   }
 
-  // Layout 2: Athlete Landing Portal Page (Route: #/ or default public)
+  // Layout 2: Athlete "Mi Plan Élite" personal portal (Route: #/plan-elite)
+  if (currentRoute === '#/plan-elite') {
+    return (
+      <div style={{ paddingTop: '3.75rem', minHeight: '100vh', backgroundColor: 'var(--bg-cream)' }}>
+        <GlobalNavBar currentRoute={currentRoute} scrollToSection={scrollToSection} />
+        <AthletePortal recipes={recipes} />
+      </div>
+    );
+  }
+
+  // Layout 3: Public one-page portfolio — continuous, Lenis-smoothed vertical
+  // scroll through every section (Route: #/ or default)
   return (
     <div style={{ paddingTop: '3.75rem' }}>
-      <GlobalNavBar />
+      <GlobalNavBar currentRoute={currentRoute} scrollToSection={scrollToSection} />
 
       <div className="app-wrapper">
-        {/* Sidebar fixed menu / Mobile toggle */}
-        <Sidebar 
-          activeSection={activeSection} 
-          setActiveSection={setActiveSection} 
-        />
+        <Sidebar />
+        <SectionNav />
 
-        {/* Conditionally Render Active Section next to the menu as a tab */}
         <div className="content-wrapper">
-          
-          {/* Infinite scrolling Ticker */}
           <Ticker />
 
-          {['workflow', 'plans', 'recipes', 'calculator'].includes(activeSection) ? (
-            <div 
-              ref={horizontalRef}
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                overflowX: 'hidden',
-                scrollBehavior: 'smooth',
-                width: '100%',
-                flex: 1
-              }}
-            >
-              <div id="workflow" style={{ minWidth: '100%', width: '100%', height: '100%', overflowY: 'auto' }}>
-                <Workflow onNavigate={setActiveSection} />
-              </div>
-              <div id="plans" style={{ minWidth: '100%', width: '100%', height: '100%', overflowY: 'auto' }}>
-                <FeaturedPlans onNavigate={setActiveSection} />
-              </div>
-              <div id="recipes" style={{ minWidth: '100%', width: '100%', height: '100%', overflowY: 'auto' }}>
-                <Recipes 
-                  recipes={recipes} 
-                  activeFilter={activeRecipeFilter}
-                  setActiveFilter={setActiveRecipeFilter}
-                />
-              </div>
-              <div id="calculator" style={{ minWidth: '100%', width: '100%', height: '100%', overflowY: 'auto' }}>
-                <Calculator />
-              </div>
-            </div>
-          ) : (
-            <>
-              {activeSection === 'hero' && <Hero onNavigate={setActiveSection} />}
-              {activeSection === 'athlete-portal' && <AthletePortal recipes={recipes} />}
-              {activeSection === 'testimonials' && <Testimonials />}
-              {activeSection === 'calendar' && (
-                <CalendarScheduler 
-                  bookings={bookings} 
-                  onAddBooking={handleAddBooking} 
-                />
-              )}
-            </>
-          )}
+          <Hero />
+          <Workflow />
+          <FeaturedPlans />
+          <Recipes
+            recipes={recipes}
+            activeFilter={activeRecipeFilter}
+            setActiveFilter={setActiveRecipeFilter}
+          />
+          <News />
+          <SocialPosts />
+          <SocialLinks />
+          <Testimonials />
+          <Calculator />
+          <Contact bookings={bookings} onAddBooking={handleAddBooking} />
 
-          {/* Footer */}
-          <footer className="footer-neo select-none">
-            <div className="footer-top-row">
-              
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                <span className="font-display" style={{ fontSize: '1.75rem', fontWeight: '900', lineHeight: 1 }}>Guadalupe.</span>
-                <span className="font-tech text-xs uppercase tracking-wider" style={{ fontWeight: 'bold', color: 'var(--kraft-brown)' }}>
-                  Licenciatura en Nutrición & Comunidad Saludable
-                </span>
-              </div>
-
-              <div className="footer-links-col">
-                <a href="https://instagram.com" target="_blank" rel="noreferrer">
-                  <AtSign size={14} /> @guada_nutrisalud
-                </a>
-                <a href="mailto:guada@nutri.com">
-                  <Mail size={14} /> guada@nutri.com
-                </a>
-                <a href="tel:+5491155556789" style={{ color: 'var(--color-dark)' }}>
-                  <Phone size={14} /> +54 9 11 5555-6789
-                </a>
-                <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#059669' }}>
-                  <ShieldCheck size={14} /> Futura Licenciada en Nutrición
-                </span>
-              </div>
-
-            </div>
-
-            {/* Footer Quick Info Row */}
-            <div className="footer-services-row">
-              <div className="footer-service-chip">
-                💪 Planificación de Cargas
-              </div>
-              <div className="footer-service-chip">
-                🌱 Alimentación Paso a Paso
-              </div>
-              <div className="footer-service-chip">
-                🔥 Recomposición Corporal
-              </div>
-              <div className="footer-service-chip">
-                🏃 Salud y Rendimiento
-              </div>
-              <div className="footer-service-chip">
-                🤝 Red de Apoyo Mutuo
-              </div>
-              <div className="footer-service-chip">
-                📊 Antropometría & Control
-              </div>
-            </div>
-
-            <div className="sidebar-divider" style={{ margin: '1.5rem auto', maxWidth: '1200px' }}></div>
-
-            <div className="footer-meta-row">
-              <span>© {new Date().getFullYear()} Guadalupe Martínez. Todos los derechos reservados.</span>
-              <div className="footer-meta-right">
-                Desarrollado con <Heart size={10} style={{ color: '#ef4444', fill: '#ef4444' }} /> para potenciar tu salud.
-              </div>
-            </div>
-          </footer>
-
+          <Footer />
         </div>
       </div>
     </div>

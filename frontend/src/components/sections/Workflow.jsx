@@ -1,7 +1,10 @@
 import React from 'react';
 import { ClipboardList, Target, CalendarDays, LineChart } from 'lucide-react';
+import useScrollToSection from '../../hooks/useScrollToSection';
+import HorizontalScrollSection from '../common/HorizontalScrollSection';
 
-export default function Workflow({ onNavigate }) {
+export default function Workflow() {
+  const scrollToSection = useScrollToSection();
   const steps = [
     {
       num: '01',
@@ -35,54 +38,49 @@ export default function Workflow({ onNavigate }) {
 
   return (
     <section id="workflow" className="workflow-section">
-      <div className="section-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3rem' }}>
-        
-        {/* Tilted Header */}
-        <div className="tilted-container">
-          <h2 className="tilted-text">
-            ¿cómo funciona <br />
-            <span style={{ color: 'var(--kraft-brown)' }}>el método?</span>
-          </h2>
-        </div>
-
-        {/* 4 Steps timeline row */}
-        <div className="workflow-grid">
-          {steps.map((step) => {
-            const Icon = step.icon;
-            return (
-              <div 
-                key={step.num}
-                className="step-card"
+      <HorizontalScrollSection
+        header={
+          <>
+            <span className="section-label">Paso a Paso</span>
+            <h2 className="section-title" style={{ marginBottom: 0 }}>
+              ¿cómo funciona el método?
+            </h2>
+            <button
+              onClick={() => scrollToSection('contact')}
+              className="btn-neo btn-accent"
+              style={{ fontSize: '0.85rem', padding: '0.75rem 1.25rem', alignSelf: 'flex-start' }}
+            >
+              Comenzar Asesoría ⚡
+            </button>
+          </>
+        }
+        trackClassName="workflow-track"
+      >
+        {steps.map((step) => {
+          const Icon = step.icon;
+          return (
+            <div
+              key={step.num}
+              className="step-card"
+              style={{ width: '18rem', flex: '0 0 18rem' }}
+            >
+              {/* Custom circular step icon frame */}
+              <div
+                className="step-icon-circle"
+                style={{ backgroundColor: step.bgColor }}
               >
-                {/* Custom circular step icon frame */}
-                <div 
-                  className="step-icon-circle"
-                  style={{ backgroundColor: step.bgColor }}
-                >
-                  <Icon size={32} />
-                  <span className="step-num-badge font-tech">
-                    {step.num}
-                  </span>
-                </div>
-
-                <h3>{step.title}</h3>
-                <p>{step.desc}</p>
+                <Icon size={32} />
+                <span className="step-num-badge font-tech">
+                  {step.num}
+                </span>
               </div>
-            );
-          })}
-        </div>
 
-        {/* CTA booking button */}
-        <div style={{ marginTop: '2rem' }}>
-          <button 
-            onClick={() => onNavigate('calendar')}
-            className="btn-neo btn-accent"
-            style={{ fontSize: '1.1rem', padding: '1rem 2rem' }}
-          >
-            Comenzar Asesoría Deportiva ⚡
-          </button>
-        </div>
-      </div>
+              <h3>{step.title}</h3>
+              <p>{step.desc}</p>
+            </div>
+          );
+        })}
+      </HorizontalScrollSection>
     </section>
   );
 }

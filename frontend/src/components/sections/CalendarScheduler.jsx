@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Clock, CheckCircle, AlertCircle } from 'lucide-react';
 
-export default function CalendarScheduler({ bookings, onAddBooking }) {
+export default function CalendarScheduler({ bookings, onAddBooking, embedded = false }) {
   const [selectedDay, setSelectedDay] = useState('Lunes');
   const [selectedTime, setSelectedTime] = useState(null);
   const [clientName, setClientName] = useState('');
@@ -44,17 +44,8 @@ export default function CalendarScheduler({ bookings, onAddBooking }) {
     setErrorMessage('');
   };
 
-  return (
-    <section id="calendar" className="section-container" style={{ display: 'flex', flexDirection: 'column', gap: '3rem', maxWidth: '850px' }}>
-      
-      {/* Title */}
-      <div className="flex flex-col text-left select-none">
-        <span className="section-label">Google Calendar Sync</span>
-        <h2 className="section-title">
-          agenda tu consulta
-        </h2>
-      </div>
-
+  const content = (
+    <>
       {bookingSuccess ? (
         /* Success Screen card styled exactly like google calendar popup card */
         <div className="invite-card">
@@ -79,7 +70,7 @@ export default function CalendarScheduler({ bookings, onAddBooking }) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontFamily: 'var(--font-sans)', fontWeight: 'bold', fontSize: '0.9rem' }}>
               <p className="invite-card-row">
                 <span style={{ color: 'var(--kraft-brown)' }}>📅 Evento:</span>
-                <span>Asesoría Nutricional Deportiva con Lic. Leticia</span>
+                <span>Asesoría Nutricional Deportiva con Guadalupe Martínez</span>
               </p>
               <p className="invite-card-row">
                 <span style={{ color: 'var(--kraft-brown)' }}>👤 Paciente:</span>
@@ -224,7 +215,25 @@ export default function CalendarScheduler({ bookings, onAddBooking }) {
 
         </div>
       )}
+    </>
+  );
 
+  if (embedded) {
+    return <div style={{ maxWidth: '850px' }}>{content}</div>;
+  }
+
+  return (
+    <section id="calendar" className="section-container" style={{ display: 'flex', flexDirection: 'column', gap: '3rem', maxWidth: '850px' }}>
+
+      {/* Title */}
+      <div className="flex flex-col text-left select-none">
+        <span className="section-label">Google Calendar Sync</span>
+        <h2 className="section-title">
+          agenda tu consulta
+        </h2>
+      </div>
+
+      {content}
     </section>
   );
 }
